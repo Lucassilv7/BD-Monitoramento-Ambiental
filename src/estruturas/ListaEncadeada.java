@@ -15,8 +15,8 @@ public class ListaEncadeada <E>{
     private No cabecote;
     private int tamanho;
 
-    public ListaEncadeada(No cabecote) {
-        this.cabecote = cabecote;
+    public ListaEncadeada() {
+        this.cabecote = null;
         this.tamanho = 0;
     }
 
