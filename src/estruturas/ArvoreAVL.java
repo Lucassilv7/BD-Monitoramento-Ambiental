@@ -25,11 +25,47 @@ public class ArvoreAVL {
         this.raiz = raiz;
     }
 
+    public boolean isEmpyt(){
+        if (raiz == null)
+            return true;
+        else
+            return false;
+    }
+    public boolean buscar(int chave){
+        return buscar(raiz, chave);
+    }
+    public Registro buscarReferencia(int chave){
+        return buscarReferencia(raiz, chave);
+    }
     public void inserir(int chave, Registro registro){
         raiz = inserir(raiz, chave, registro);
     }
     public void remover(int chave, Registro registro){
         raiz = remover(raiz, chave, registro);
+    }
+
+    private boolean buscar(No arv,int chave){
+        if (arv != null){
+            if (arv.chave == chave)
+                return true;
+            else if (chave < arv.chave)
+                return buscar(arv.esquerda, chave);
+            else
+                return buscar(arv.direita, chave);
+        }
+        return false;
+    }
+
+    private Registro buscarReferencia(No arv, int chave){
+        if (arv != null){
+            if (arv.chave == chave)
+                return arv.referencia;
+            else if (chave < arv.chave)
+                return buscarReferencia(arv.esquerda, chave);
+            else
+                return buscarReferencia(arv.direita, chave);
+        }
+        return null;
     }
 
     private No inserir(No arvore, int chave, Registro registro){
@@ -173,6 +209,7 @@ public class ArvoreAVL {
 
         return y;
     }
+
 
 
 }

@@ -15,12 +15,21 @@ public class Registro {
     public Registro() {
     }
 
-    public Registro(String idDispositivo, LocalDateTime dataHora, double temperatura, double umidade, double pressao) {
+    public Registro(int idRegistro, String idDispositivo, LocalDateTime dataHora, double temperatura, double umidade, double pressao) {
+        this.idRegistro = idRegistro;
         this.idDispositivo = idDispositivo;
         this.dataHora = dataHora;
         this.temperatura = temperatura;
         this.umidade = umidade;
         this.pressao = pressao;
+    }
+
+    public int getIdRegistro() {
+        return idRegistro;
+    }
+
+    public String getIdDispositivo() {
+        return idDispositivo;
     }
 
     public LocalDateTime getDataHora() {

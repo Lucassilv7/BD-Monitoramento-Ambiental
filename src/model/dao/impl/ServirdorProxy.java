@@ -24,12 +24,17 @@ public class ServirdorProxy implements RegistroDao {
     }
 
     @Override
+    public Registro buscarPorDispositivo(String dispositivo) {
+        return null;
+    }
+
+    @Override
     public List<Registro> listar() {
         return null;
     }
 
     @Override
-    public void remover(Registro registro) {
+    public void remover(int id) {
 
     }
 
