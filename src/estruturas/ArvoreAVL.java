@@ -1,6 +1,7 @@
 package estruturas;
 
 import model.entidades.Registro;
+import util.TipoRotacao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class ArvoreAVL {
     }
 
     private No raiz;
-    private int quantidadeRotacoes;
+    private TipoRotacao ultimaRotacao = TipoRotacao.Nenhuma;
 
     public ArvoreAVL() {
     }
@@ -29,15 +30,20 @@ public class ArvoreAVL {
         this.raiz = raiz;
     }
 
-    public boolean isEmpyt(){
+    public boolean isEmpty(){
         if (raiz == null)
             return true;
         else
             return false;
     }
-    public int getQuantidadeRotacoes() {
-        return quantidadeRotacoes;
+    public int alturaArvore(){
+        return altura(raiz);
     }
+
+    public TipoRotacao getUltimaRotacao() {
+        return ultimaRotacao;
+    }
+
     public boolean buscar(int chave){
         return buscar(raiz, chave);
     }
@@ -83,8 +89,8 @@ public class ArvoreAVL {
         if (arv != null){
             if (arv.referencia.getIdDispositivo() == chave)
                 list.add(arv.referencia);
-            buscarPorIdDispositivo(arv.esquerda, chave);
-            buscarPorIdDispositivo(arv.direita, chave);
+            list.addAll(buscarPorIdDispositivo(arv.esquerda, chave));
+            list.addAll(buscarPorIdDispositivo(arv.direita, chave));
         }
         return list;
     }
@@ -107,18 +113,24 @@ public class ArvoreAVL {
         int fatorSubarvoreEsquerda = fatorBalanceamento(arvore.esquerda);
         int fatorSubarvoreDireita = fatorBalanceamento(arvore.direita);
 
-        if (fator > 1 && fatorSubarvoreEsquerda >=0)
+        if (fator > 1 && fatorSubarvoreEsquerda >=0) {
+            ultimaRotacao = TipoRotacao.Rotacao_Direita_Simples;
             return rotacaoDireitaSimples(arvore);
+        }
 
-        if (fator < -1 && fatorSubarvoreDireita <= 0)
+        if (fator < -1 && fatorSubarvoreDireita <= 0) {
+            ultimaRotacao = TipoRotacao.Rotacao_Esquerda_Simples;
             return rotacaoEsquerdaSimples(arvore);
+        }
 
         if (fator > 1 && fatorSubarvoreEsquerda < 0){
+            ultimaRotacao = TipoRotacao.Rotacao_Dupla_Direita;
             arvore.esquerda = rotacaoEsquerdaSimples(arvore.esquerda);
             return rotacaoDireitaSimples(arvore);
         }
 
         if (fator < -1 && fatorSubarvoreDireita > 0){
+            ultimaRotacao = TipoRotacao.Rotacao_Dupla_Esquerda;
             arvore.direita = rotacaoDireitaSimples(arvore.direita);
             return rotacaoEsquerdaSimples(arvore);
         }
@@ -130,9 +142,9 @@ public class ArvoreAVL {
         if (arvore == null)
             return arvore;
         if (chave < arvore.chave)
-            arvore.esquerda = remover(arvore, chave, registro);
+            arvore.esquerda = remover(arvore.esquerda, chave, registro);
         else if (chave > arvore.chave)
-            arvore.direita = remover(arvore, chave, registro);
+            arvore.direita = remover(arvore.direita, chave, registro);
         else{
             if (arvore.esquerda == null && arvore.direita == null)
                 arvore = null;
@@ -162,17 +174,23 @@ public class ArvoreAVL {
         int fatorSubarvoreEsquerda = fatorBalanceamento(arvore.esquerda);
         int fatorSubarvoreDireita = fatorBalanceamento(arvore.direita);
 
-        if (fator > 1 && fatorSubarvoreEsquerda >= 0)
+        if (fator > 1 && fatorSubarvoreEsquerda >= 0) {
+            ultimaRotacao = TipoRotacao.Rotacao_Direita_Simples;
             return rotacaoDireitaSimples(arvore);
+        }
 
-        if (fator < -1 && fatorSubarvoreDireita <= 0)
+        if (fator < -1 && fatorSubarvoreDireita <= 0) {
+            ultimaRotacao = TipoRotacao.Rotacao_Esquerda_Simples;
             return rotacaoEsquerdaSimples(arvore);
+        }
 
         if (fator > 1 && fatorSubarvoreEsquerda < 0){
+            ultimaRotacao = TipoRotacao.Rotacao_Dupla_Direita;
             arvore.esquerda = rotacaoEsquerdaSimples(arvore.esquerda);
             return rotacaoDireitaSimples(arvore);
         }
         if (fator < -1 && fatorSubarvoreDireita > 0){
+            ultimaRotacao = TipoRotacao.Rotacao_Dupla_Esquerda;
             arvore.direita = rotacaoDireitaSimples(arvore.direita);
             return rotacaoEsquerdaSimples(arvore);
         }
@@ -215,7 +233,7 @@ public class ArvoreAVL {
         y.altura = maior(altura(y.esquerda), altura(y.direita)) + 1;
         x.altura = maior(altura(x.esquerda), altura(x.direita)) + 1;
 
-        quantidadeRotacoes++;
+
         return x;
     }
 
@@ -229,7 +247,7 @@ public class ArvoreAVL {
         x.altura = maior(altura(x.esquerda), altura(x.direita)) + 1;
         y.altura = maior(altura(y.esquerda), altura(y.direita)) + 1;
 
-        quantidadeRotacoes++;
+
         return y;
     }
 

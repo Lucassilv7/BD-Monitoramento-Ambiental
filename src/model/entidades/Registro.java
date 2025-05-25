@@ -6,7 +6,7 @@ import java.util.Objects;
 public class Registro {
 
     private int idRegistro;
-    private int idDispositivo;
+    private MicroControlador Dispositivo;
     private LocalDateTime dataHora;
     private double temperatura;
     private double umidade;
@@ -15,9 +15,9 @@ public class Registro {
     public Registro() {
     }
 
-    public Registro(int idRegistro, int idDispositivo, LocalDateTime dataHora, double temperatura, double umidade, double pressao) {
+    public Registro(int idRegistro, MicroControlador Dispositivo, LocalDateTime dataHora, double temperatura, double umidade, double pressao) {
         this.idRegistro = idRegistro;
-        this.idDispositivo = idDispositivo;
+        this.Dispositivo = Dispositivo;
         this.dataHora = dataHora;
         this.temperatura = temperatura;
         this.umidade = umidade;
@@ -29,7 +29,7 @@ public class Registro {
     }
 
     public int getIdDispositivo() {
-        return idDispositivo;
+        return Dispositivo.getIdDispositivo();
     }
 
     public LocalDateTime getDataHora() {
@@ -68,11 +68,22 @@ public class Registro {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Registro registro)) return false;
-        return getIdRegistro() == registro.getIdRegistro() && Objects.equals(getIdDispositivo(), registro.getIdDispositivo());
+        return getIdRegistro() == registro.getIdRegistro();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdRegistro(), getIdDispositivo());
+        return Objects.hash(getIdRegistro());
+    }
+
+    @Override
+    public String toString() {
+        return "Id do Registro: " + idRegistro +
+                "\nNome do dispositivo: " + Dispositivo.getNome() +
+                "\nData e hora:" + dataHora +
+                "\nTemperatura: " + temperatura +
+                "\nUmidade: " + umidade +
+                "\nPressao: " + pressao
+                ;
     }
 }

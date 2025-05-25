@@ -7,7 +7,6 @@ import java.util.List;
 public interface RegistroDao {
 
     void cadastrar(Registro registro);
-
     Registro buscar(int idRegistro);
     List<Registro> buscarPorDispositivo(int idDispositivo);
     List<Registro> listar();
