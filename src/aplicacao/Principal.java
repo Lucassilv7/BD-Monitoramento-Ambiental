@@ -15,12 +15,13 @@ public class Principal {
         Scanner sc = new Scanner(System.in);
         Random random = new Random();
 
+        // Lista de 0 a 100 para ser usado como id do rergistro
         List<Integer> numeros = new ArrayList<>();
 
         for (int i = 0; i < 100; i++) {
             numeros.add(i);
         }
-
+        // Embaralha a lista
         Collections.shuffle(numeros);
 
 
