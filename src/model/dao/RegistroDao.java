@@ -8,8 +8,8 @@ public interface RegistroDao {
 
     void cadastrar(Registro registro);
 
-    Registro buscar(int id);
-    Registro buscarPorDispositivo(String dispositivo);
+    Registro buscar(int idRegistro);
+    List<Registro> buscarPorDispositivo(int idDispositivo);
     List<Registro> listar();
     void remover(int id);
     void alterar(Registro registro);

@@ -6,7 +6,7 @@ import java.util.Objects;
 public class Registro {
 
     private int idRegistro;
-    private String idDispositivo;
+    private int idDispositivo;
     private LocalDateTime dataHora;
     private double temperatura;
     private double umidade;
@@ -15,7 +15,7 @@ public class Registro {
     public Registro() {
     }
 
-    public Registro(int idRegistro, String idDispositivo, LocalDateTime dataHora, double temperatura, double umidade, double pressao) {
+    public Registro(int idRegistro, int idDispositivo, LocalDateTime dataHora, double temperatura, double umidade, double pressao) {
         this.idRegistro = idRegistro;
         this.idDispositivo = idDispositivo;
         this.dataHora = dataHora;
@@ -28,7 +28,7 @@ public class Registro {
         return idRegistro;
     }
 
-    public String getIdDispositivo() {
+    public int getIdDispositivo() {
         return idDispositivo;
     }
 
@@ -68,11 +68,11 @@ public class Registro {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Registro registro)) return false;
-        return idRegistro == registro.idRegistro;
+        return getIdRegistro() == registro.getIdRegistro() && Objects.equals(getIdDispositivo(), registro.getIdDispositivo());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idRegistro);
+        return Objects.hash(getIdRegistro(), getIdDispositivo());
     }
 }

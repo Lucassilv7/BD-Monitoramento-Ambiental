@@ -2,6 +2,9 @@ package estruturas;
 
 import model.entidades.Registro;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ArvoreAVL {
 
     class No{
@@ -18,6 +21,7 @@ public class ArvoreAVL {
     }
 
     private No raiz;
+    private int quantidadeRotacoes;
 
     public ArvoreAVL() {
     }
@@ -31,11 +35,17 @@ public class ArvoreAVL {
         else
             return false;
     }
+    public int getQuantidadeRotacoes() {
+        return quantidadeRotacoes;
+    }
     public boolean buscar(int chave){
         return buscar(raiz, chave);
     }
-    public Registro buscarReferencia(int chave){
-        return buscarReferencia(raiz, chave);
+    public Registro buscarPorIdRegistro(int chave){
+        return buscarPorIdRegistro(raiz, chave);
+    }
+    public List<Registro> buscarPorIdDispositivo(int chave){
+        return buscarPorIdDispositivo(raiz, chave);
     }
     public void inserir(int chave, Registro registro){
         raiz = inserir(raiz, chave, registro);
@@ -56,16 +66,27 @@ public class ArvoreAVL {
         return false;
     }
 
-    private Registro buscarReferencia(No arv, int chave){
+    private Registro buscarPorIdRegistro(No arv, int chave){
         if (arv != null){
             if (arv.chave == chave)
                 return arv.referencia;
             else if (chave < arv.chave)
-                return buscarReferencia(arv.esquerda, chave);
+                return buscarPorIdRegistro(arv.esquerda, chave);
             else
-                return buscarReferencia(arv.direita, chave);
+                return buscarPorIdRegistro(arv.direita, chave);
         }
         return null;
+    }
+
+    private List<Registro> buscarPorIdDispositivo(No arv, int chave){
+        List<Registro> list = new ArrayList<>();
+        if (arv != null){
+            if (arv.referencia.getIdDispositivo() == chave)
+                list.add(arv.referencia);
+            buscarPorIdDispositivo(arv.esquerda, chave);
+            buscarPorIdDispositivo(arv.direita, chave);
+        }
+        return list;
     }
 
     private No inserir(No arvore, int chave, Registro registro){
@@ -194,6 +215,7 @@ public class ArvoreAVL {
         y.altura = maior(altura(y.esquerda), altura(y.direita)) + 1;
         x.altura = maior(altura(x.esquerda), altura(x.direita)) + 1;
 
+        quantidadeRotacoes++;
         return x;
     }
 
@@ -207,6 +229,7 @@ public class ArvoreAVL {
         x.altura = maior(altura(x.esquerda), altura(x.direita)) + 1;
         y.altura = maior(altura(y.esquerda), altura(y.direita)) + 1;
 
+        quantidadeRotacoes++;
         return y;
     }
 

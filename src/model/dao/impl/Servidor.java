@@ -42,10 +42,10 @@ public class Servidor implements RegistroDao{
     }
 
     @Override
-    public Registro buscar(int id) {
+    public Registro buscar(int idRegistro) {
         try{
             // Verifica se o registro existe
-            Registro ponteiro = indexador.buscarReferencia(id);
+            Registro ponteiro = indexador.buscarPorIdRegistro(idRegistro);
             if (ponteiro != null){
                 // Retorna o registro
                 return bancoDados.procurar(ponteiro);
@@ -58,8 +58,24 @@ public class Servidor implements RegistroDao{
     }
 
     @Override
-    public Registro buscarPorDispositivo(String dispositivo) {
-        return null;
+    public List<Registro> buscarPorDispositivo(int idDispositivo) {
+        try {
+            // Verfica se o banco de dados está vazio
+            List<Registro> ponteiro = indexador.buscarPorIdDispositivo(idDispositivo);
+            List<Registro> retorno = new ArrayList<>();
+            if (!indexador.isEmpyt()) {
+                for (Registro registro : ponteiro) {
+                    // Adiciona o registro na lista de retorno
+                    retorno.add(bancoDados.procurar(registro));
+                }
+                // Retorna o registro
+                return retorno;
+            } else {
+                throw new Exception("Dispositivo não encontrado");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -84,7 +100,7 @@ public class Servidor implements RegistroDao{
         try {
             // Verifica se há registros
             if (!indexador.isEmpyt()){
-                Registro ponteiro = indexador.buscarReferencia(id);
+                Registro ponteiro = indexador.buscarPorIdRegistro(id);
                 // Remove do banco de dados
                 bancoDados.remover(ponteiro);
                 // Remove do indexador
@@ -102,7 +118,7 @@ public class Servidor implements RegistroDao{
         try {
             // Verifica se o registro existe
             if (!indexador.isEmpyt()){
-                Registro ponteiro = indexador.buscarReferencia(registro.getIdRegistro());
+                Registro ponteiro = indexador.buscarPorIdRegistro(registro.getIdRegistro());
                 // Altera o registro
                 ponteiro = registro;
             }else {

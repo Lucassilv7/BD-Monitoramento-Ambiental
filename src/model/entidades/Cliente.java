@@ -1,5 +1,7 @@
 package model.entidades;
 
+import model.dao.impl.ServidorProxy;
+
 public class Cliente {
 
     private int id;
@@ -29,7 +31,16 @@ public class Cliente {
         this.nome = nome;
     }
 
-    public void solicitaraRegistro(int chave){}
+    public void solicitarRegistro(int chave, ServidorProxy servidor){
+        // Solicita o registro ao servidor
+        servidor.buscar(chave);
+        // Exibe o registro
+    }
+
+    public void solicitarRegistroPorDispositivo(int chave, ServidorProxy servidor){
+        // Solicita o registro ao servidor que está relacionado ao dispositivo
+        servidor.buscarPorDispositivo(chave);
+    }
 
     public void solicitarListaDeRegistros(){}
 

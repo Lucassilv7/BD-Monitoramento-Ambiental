@@ -5,46 +5,43 @@ import model.entidades.Registro;
 
 import java.util.List;
 
-public class ServirdorProxy implements RegistroDao {
+public class ServidorProxy implements RegistroDao {
 
     private Servidor servidorReal;
 
-    public ServirdorProxy(Servidor servidorReal) {
+    public ServidorProxy(Servidor servidorReal) {
         this.servidorReal = servidorReal;
     }
 
     @Override
     public void cadastrar(Registro registro) {
-
     }
 
     @Override
-    public Registro buscar(int id) {
-        return null;
+    public Registro buscar(int idRegistro) {
+        return servidorReal.buscar(idRegistro);
     }
 
     @Override
-    public Registro buscarPorDispositivo(String dispositivo) {
-        return null;
+    public List<Registro> buscarPorDispositivo(int Dispositivo) {
+        return servidorReal.buscarPorDispositivo(Dispositivo);
     }
 
     @Override
     public List<Registro> listar() {
-        return null;
+        return servidorReal.listar();
     }
 
     @Override
     public void remover(int id) {
-
     }
-
     @Override
     public void alterar(Registro registro) {
-
+        servidorReal.alterar(registro);
     }
 
     @Override
     public int quntidadeRegistros() {
-        return 0;
+        return servidorReal.quntidadeRegistros();
     }
 }
