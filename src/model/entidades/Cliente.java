@@ -110,6 +110,7 @@ public class Cliente {
                     break;
                 case 2:
                     System.out.println("\n==========");
+                    System.out.println("*OBS: Dispositivos tem um id padrão começando em 111 sendo seu próximo dígito o que diferencia");
                     System.out.print("Informe o id do dispositivo: ");
                     int idDispositivo = sc.nextInt();
                     solicitarRegistroPorDispositivo(idDispositivo, servidorProxy);
