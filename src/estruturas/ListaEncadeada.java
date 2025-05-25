@@ -1,5 +1,8 @@
 package estruturas;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ListaEncadeada <E>{
 
     class No{
@@ -68,6 +71,22 @@ public class ListaEncadeada <E>{
         else{
             return cabecote.valor;
         }
+    }
+
+    public List<E> listar(){
+        No ponteiro = cabecote;
+        List<E> lista = new ArrayList<>();
+
+        if (cabecote == null)
+            return null;
+        else{
+            while (ponteiro != null){
+                lista.add(ponteiro.valor);
+                ponteiro = ponteiro.proximo;
+            }
+        }
+
+        return lista;
     }
 
     public E pegarUltimo() {
@@ -147,19 +166,7 @@ public class ListaEncadeada <E>{
             return dadoRetorno;
         }
     }
-    public void mostrar() {
-        No ponteiro = cabecote;
-
-        if (cabecote == null)
-            System.out.println("Lista vazia!!!\n");
-        else{
-            while (ponteiro != null){
-                System.out.print(ponteiro.valor + " ");
-                ponteiro = ponteiro.proximo;
-            }
-            System.out.println();
-        }
-
-        System.out.println("Tamanho da lista: " + tamanho);
+    public int quantidade() {
+        return tamanho;
     }
 }

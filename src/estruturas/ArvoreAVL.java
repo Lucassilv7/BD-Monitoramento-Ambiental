@@ -1,6 +1,10 @@
 package estruturas;
 
 import model.entidades.Registro;
+import util.TipoRotacao;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArvoreAVL {
 
@@ -18,6 +22,7 @@ public class ArvoreAVL {
     }
 
     private No raiz;
+    private TipoRotacao ultimaRotacao = TipoRotacao.Nenhuma;
 
     public ArvoreAVL() {
     }
@@ -25,11 +30,69 @@ public class ArvoreAVL {
         this.raiz = raiz;
     }
 
+    public boolean isEmpty(){
+        if (raiz == null)
+            return true;
+        else
+            return false;
+    }
+    public int alturaArvore(){
+        return altura(raiz);
+    }
+
+    public TipoRotacao getUltimaRotacao() {
+        return ultimaRotacao;
+    }
+
+    public boolean buscar(int chave){
+        return buscar(raiz, chave);
+    }
+    public Registro buscarPorIdRegistro(int chave){
+        return buscarPorIdRegistro(raiz, chave);
+    }
+    public List<Registro> buscarPorIdDispositivo(int chave){
+        return buscarPorIdDispositivo(raiz, chave);
+    }
     public void inserir(int chave, Registro registro){
         raiz = inserir(raiz, chave, registro);
     }
     public void remover(int chave, Registro registro){
         raiz = remover(raiz, chave, registro);
+    }
+
+    private boolean buscar(No arv,int chave){
+        if (arv != null){
+            if (arv.chave == chave)
+                return true;
+            else if (chave < arv.chave)
+                return buscar(arv.esquerda, chave);
+            else
+                return buscar(arv.direita, chave);
+        }
+        return false;
+    }
+
+    private Registro buscarPorIdRegistro(No arv, int chave){
+        if (arv != null){
+            if (arv.chave == chave)
+                return arv.referencia;
+            else if (chave < arv.chave)
+                return buscarPorIdRegistro(arv.esquerda, chave);
+            else
+                return buscarPorIdRegistro(arv.direita, chave);
+        }
+        return null;
+    }
+
+    private List<Registro> buscarPorIdDispositivo(No arv, int chave){
+        List<Registro> list = new ArrayList<>();
+        if (arv != null){
+            if (arv.referencia.getIdDispositivo() == chave)
+                list.add(arv.referencia);
+            list.addAll(buscarPorIdDispositivo(arv.esquerda, chave));
+            list.addAll(buscarPorIdDispositivo(arv.direita, chave));
+        }
+        return list;
     }
 
     private No inserir(No arvore, int chave, Registro registro){
@@ -50,18 +113,24 @@ public class ArvoreAVL {
         int fatorSubarvoreEsquerda = fatorBalanceamento(arvore.esquerda);
         int fatorSubarvoreDireita = fatorBalanceamento(arvore.direita);
 
-        if (fator > 1 && fatorSubarvoreEsquerda >=0)
+        if (fator > 1 && fatorSubarvoreEsquerda >=0) {
+            ultimaRotacao = TipoRotacao.Rotacao_Direita_Simples;
             return rotacaoDireitaSimples(arvore);
+        }
 
-        if (fator < -1 && fatorSubarvoreDireita <= 0)
+        if (fator < -1 && fatorSubarvoreDireita <= 0) {
+            ultimaRotacao = TipoRotacao.Rotacao_Esquerda_Simples;
             return rotacaoEsquerdaSimples(arvore);
+        }
 
         if (fator > 1 && fatorSubarvoreEsquerda < 0){
+            ultimaRotacao = TipoRotacao.Rotacao_Dupla_Direita;
             arvore.esquerda = rotacaoEsquerdaSimples(arvore.esquerda);
             return rotacaoDireitaSimples(arvore);
         }
 
         if (fator < -1 && fatorSubarvoreDireita > 0){
+            ultimaRotacao = TipoRotacao.Rotacao_Dupla_Esquerda;
             arvore.direita = rotacaoDireitaSimples(arvore.direita);
             return rotacaoEsquerdaSimples(arvore);
         }
@@ -73,9 +142,9 @@ public class ArvoreAVL {
         if (arvore == null)
             return arvore;
         if (chave < arvore.chave)
-            arvore.esquerda = remover(arvore, chave, registro);
+            arvore.esquerda = remover(arvore.esquerda, chave, registro);
         else if (chave > arvore.chave)
-            arvore.direita = remover(arvore, chave, registro);
+            arvore.direita = remover(arvore.direita, chave, registro);
         else{
             if (arvore.esquerda == null && arvore.direita == null)
                 arvore = null;
@@ -105,17 +174,23 @@ public class ArvoreAVL {
         int fatorSubarvoreEsquerda = fatorBalanceamento(arvore.esquerda);
         int fatorSubarvoreDireita = fatorBalanceamento(arvore.direita);
 
-        if (fator > 1 && fatorSubarvoreEsquerda >= 0)
+        if (fator > 1 && fatorSubarvoreEsquerda >= 0) {
+            ultimaRotacao = TipoRotacao.Rotacao_Direita_Simples;
             return rotacaoDireitaSimples(arvore);
+        }
 
-        if (fator < -1 && fatorSubarvoreDireita <= 0)
+        if (fator < -1 && fatorSubarvoreDireita <= 0) {
+            ultimaRotacao = TipoRotacao.Rotacao_Esquerda_Simples;
             return rotacaoEsquerdaSimples(arvore);
+        }
 
         if (fator > 1 && fatorSubarvoreEsquerda < 0){
+            ultimaRotacao = TipoRotacao.Rotacao_Dupla_Direita;
             arvore.esquerda = rotacaoEsquerdaSimples(arvore.esquerda);
             return rotacaoDireitaSimples(arvore);
         }
         if (fator < -1 && fatorSubarvoreDireita > 0){
+            ultimaRotacao = TipoRotacao.Rotacao_Dupla_Esquerda;
             arvore.direita = rotacaoDireitaSimples(arvore.direita);
             return rotacaoEsquerdaSimples(arvore);
         }
@@ -158,6 +233,7 @@ public class ArvoreAVL {
         y.altura = maior(altura(y.esquerda), altura(y.direita)) + 1;
         x.altura = maior(altura(x.esquerda), altura(x.direita)) + 1;
 
+
         return x;
     }
 
@@ -171,8 +247,10 @@ public class ArvoreAVL {
         x.altura = maior(altura(x.esquerda), altura(x.direita)) + 1;
         y.altura = maior(altura(y.esquerda), altura(y.direita)) + 1;
 
+
         return y;
     }
+
 
 
 }
