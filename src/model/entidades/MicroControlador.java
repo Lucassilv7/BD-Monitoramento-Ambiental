@@ -64,7 +64,7 @@ public class MicroControlador {
             switch (opcao) {
                 case 1:
                     System.out.println("\n==========");
-                    Registro registro = new Registro(random.nextInt(100) + 1, microControlador, LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
+                    Registro registro = new Registro(random.nextInt(300) + 100, microControlador, LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
                     enviarRegistro(registro, servidorProxy);
                     break;
                 case 2:

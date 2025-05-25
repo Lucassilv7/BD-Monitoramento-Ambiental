@@ -8,15 +8,21 @@ import model.entidades.MicroControlador;
 import model.entidades.Registro;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Principal {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Random random = new Random();
+
+        List<Integer> numeros = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            numeros.add(i);
+        }
+
+        Collections.shuffle(numeros);
+
 
         /**
          * Instancia dos objetos necessários para o funcionamento do sistema.
@@ -34,9 +40,10 @@ public class Principal {
         for (int i = 0; i < 10; i++) {
             // Instancia um novo microcontrolador e adiciona na lista
             microControladores.add(new MicroControlador(1110 + i, "Dispositivo " + i));
-            for (int j = 0; j < 10; j++){
-                Registro registro = new Registro(random.nextInt(100) + 1,microControladores.get(i), LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
+            for (int j = 9; j > -1; j--){
+                Registro registro = new Registro(numeros.get(j),microControladores.get(i), LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
                 microControladores.get(i).enviarRegistro(registro, servidorProxy);
+                numeros.remove(j);
             }
         }
         menu();
