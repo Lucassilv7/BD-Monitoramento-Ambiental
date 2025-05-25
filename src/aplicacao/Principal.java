@@ -71,8 +71,10 @@ public class Principal {
                     System.out.println("Opção inválida! Tente novamente.\n\n");
                     break;
             }
-            menu();
-            tipoSistema = sc.nextInt();
+            if (tipoSistema != 4) {
+                menu();
+                tipoSistema = sc.nextInt();
+            }
         }while (tipoSistema != 4);
 
 
