@@ -75,9 +75,8 @@ public class Servidor implements RegistroDao{
                 throw new RuntimeException("O banco de dados está vazio.");
             }
 
-            List<Registro> ponteiro = new ArrayList<>();
+            List<Registro> ponteiro = indexador.buscarPorIdDispositivo(idDispositivo);
             List<Registro> retorno = new ArrayList<>();
-            ponteiro = indexador.buscarPorIdDispositivo(idDispositivo);
 
             for (Registro registro : ponteiro) {
                 // Adiciona o registro na lista de retorno

@@ -102,7 +102,7 @@ public class Principal {
     //diferentes. Após isso, faça uma listagem via cliente
     public static void cadastrar5(ServidorProxy servidorProxy, List<MicroControlador> microControladores, Cliente cliente, Random random){
         for (int i = 0; i < 5; i++) {
-            Registro registro = new Registro(100 + i, microControladores.get(i), LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
+            Registro registro = new Registro((100 + i), microControladores.get(i), LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
             microControladores.get(i).enviarRegistro(registro, servidorProxy);
         }
         System.out.println("\nCinco registros cadastrados com sucesso!\n\n");
@@ -113,7 +113,7 @@ public class Principal {
     //dispositivos diferentes. Após isso, faça uma listagem via cliente.
     public static void alterar5(ServidorProxy servidorProxy, List<MicroControlador> microControladores, Cliente cliente, Random random){
         for (int i = 0; i < 5; i++) {
-            Registro registro = new Registro(100 + i, microControladores.get(i), LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
+            Registro registro = new Registro((100 + i), microControladores.get(i), LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
             microControladores.get(i).alterarRegistro(registro, servidorProxy);
         }
         System.out.println("\nCinco registros alterados com sucesso!\n\n");
