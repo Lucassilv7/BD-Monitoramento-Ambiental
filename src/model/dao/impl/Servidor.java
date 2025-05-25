@@ -118,11 +118,15 @@ public class Servidor implements RegistroDao{
             // Verifica se há registros
             if (!indexador.isEmpty()){
                 Registro ponteiro = indexador.buscarPorIdRegistro(id);
-                // Remove do banco de dados
-                bancoDados.remover(ponteiro);
-                // Remove do indexador
-                indexador.remover(id, ponteiro);
-                System.out.println("Registro removido com sucesso");
+                if (ponteiro == null){
+                    throw new Exception("Registro não encontrado");
+                }else{
+                    // Remove do banco de dados
+                    bancoDados.remover(ponteiro);
+                    // Remove do indexador
+                    indexador.remover(id, ponteiro);
+                    System.out.println("Registro removido com sucesso");
+                }
             }else {
                 throw new Exception("Não há registros cadastrados");
             }
