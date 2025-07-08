@@ -154,17 +154,33 @@ public class ListaEncadeada <E>{
     }
 
     public E remover(E criterio) {
-        No ponteiro = procurarNo(criterio);
 
-        if (ponteiro == null)
+        if (cabecote == null || procurarNo(criterio) == null) {
             return null;
-        else{
-            E dadoRetorno = ponteiro.valor;
-            cabecote = ponteiro.proximo;
-            ponteiro.proximo = null;
+        }
+
+        if (cabecote.valor.equals(criterio)) {
+            E dadoRetorno = cabecote.valor;
+            cabecote = cabecote.proximo;
             tamanho--;
             return dadoRetorno;
         }
+
+        No anterior = cabecote;
+        while (anterior.proximo != null && !anterior.proximo.valor.equals(criterio)) {
+            anterior = anterior.proximo;
+        }
+
+        if (anterior.proximo != null) {
+            No noParaRemover = anterior.proximo;
+            E dadoRetorno = noParaRemover.valor;
+            anterior.proximo = noParaRemover.proximo;
+            noParaRemover.proximo = null;
+            tamanho--;
+            return dadoRetorno;
+        }
+
+        return null;
     }
     public int quantidade() {
         return tamanho;

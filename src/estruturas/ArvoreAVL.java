@@ -200,7 +200,7 @@ public class ArvoreAVL {
 
     private int altura(No arvore){
         if (arvore == null)
-            return -1;
+            return 0;
         return arvore.altura;
     }
 

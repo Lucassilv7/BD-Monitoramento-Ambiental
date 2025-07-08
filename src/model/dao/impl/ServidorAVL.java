@@ -3,18 +3,19 @@ package model.dao.impl;
 import estruturas.ArvoreAVL;
 import estruturas.ListaEncadeada;
 import model.dao.RegistroDao;
+import model.entidades.MicroControlador;
 import model.entidades.Registro;
 import util.TipoRotacao;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Servidor implements RegistroDao{
+public class ServidorAVL <E> implements RegistroDao<E>{
 
     private ListaEncadeada<Registro> bancoDados;
     private ArvoreAVL indexador;
 
-    public Servidor() {
+    public ServidorAVL() {
         this.bancoDados = new ListaEncadeada<>();
         this.indexador = new ArvoreAVL();
     }
@@ -29,10 +30,10 @@ public class Servidor implements RegistroDao{
     }
 
     @Override
-    public void cadastrar(Registro registro) {
+    public void cadastrar(Registro registro, MicroControlador dispositivo) {
         // Execeção para verificar se o registro já existe ou é nulo
         try{
-            if (!indexador.isEmpty()){
+            if (indexador.isEmpty()){
                 // Adiciona o registro no banco de dados
                 bancoDados.adicionarPrimeiro(registro);
                 // Adiciona o registro no indexador
@@ -43,7 +44,7 @@ public class Servidor implements RegistroDao{
                 // Adiciona o registro no indexador
                 indexador.inserir(registro.getIdRegistro(), registro);
             } else {
-                throw new Exception("Registro já existe");
+                throw new Exception("Registro já existe ou é nulo");
             }
 
         } catch (Exception e) {
@@ -68,7 +69,8 @@ public class Servidor implements RegistroDao{
     }
 
     @Override
-    public List<Registro> buscarPorDispositivo(int idDispositivo) {
+    @SuppressWarnings("unchecked")
+    public List<E> buscarPorDispositivo(int idDispositivo) {
         try {
             // Verfica se o banco de dados está vazio
             if (indexador.isEmpty()) {
@@ -88,13 +90,14 @@ public class Servidor implements RegistroDao{
             }
 
             // Retorna o registro
-            return retorno;
+            return (List<E>) retorno;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Registro> listar() {
         try {
             // Verifica se o banco de dados está vazio
@@ -135,7 +138,7 @@ public class Servidor implements RegistroDao{
     }
 
     @Override
-    public void alterar(Registro registro) {
+    public void alterar(Registro registro, MicroControlador dispositivo) {
         try {
             // Verifica se o registro existe
             if (!indexador.isEmpty()){
