@@ -1,6 +1,7 @@
 package model.entidades;
 
-import model.dao.impl.ServidorProxy;
+import model.dao.impl.ServidorAVLProxy;
+import model.dao.impl.ServidorHashProxy;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -36,19 +37,34 @@ public class MicroControlador {
         this.nome = nome;
     }
 
-    public void enviarRegistro(Registro registro, ServidorProxy servidor){
+    public void enviarRegistro(Registro registro, ServidorAVLProxy servidorAVL, ServidorHashProxy servidorHash, boolean exibirMensagem, MicroControlador dispositivo) {
         // Envia o registro a ser cadastrado
-        servidor.cadastrar(registro);
-        System.out.println("Registro de nº " + registro.getIdRegistro() + " enviado com sucesso!");
+        if (servidorAVL != null)
+            servidorAVL.cadastrar(registro, null);
+        else if (servidorHash != null)
+            servidorHash.cadastrar(registro, dispositivo);
+        else
+            throw new IllegalArgumentException("Servidor não configurado.");
+
+        if (exibirMensagem)
+            System.out.println("Registro de nº " + registro.getIdRegistro() + " enviado com sucesso!");
+
     }
 
-    public void alterarRegistro(Registro registro, ServidorProxy servidor){
+    public void alterarRegistro(Registro registro, ServidorAVLProxy servidorAVL, ServidorHashProxy servidorHash, boolean exibirMensagem) {
         // Envia o registro a ser alterado
-        servidor.alterar(registro);
-        System.out.println("Registro de nº " + registro.getIdRegistro() + " alterado com sucesso!");
+        if (servidorAVL != null)
+            servidorAVL.alterar(registro, null);
+        else if (servidorHash != null)
+            servidorHash.alterar(registro, this);
+        else
+            throw new IllegalArgumentException("Servidor não configurado.");
+
+        if (exibirMensagem)
+            System.out.println("Registro de nº " + registro.getIdRegistro() + " alterado com sucesso!");
     }
 
-    public void menuDispositivo(Scanner sc, ServidorProxy servidorProxy, MicroControlador microControlador) {
+    public void menuDispositivo(Scanner sc, ServidorAVLProxy servidorAVLProxy, ServidorHashProxy servidorHashProxy, MicroControlador microControlador) {
         Random random = new Random();
         int opcao;
 
@@ -64,15 +80,25 @@ public class MicroControlador {
             switch (opcao) {
                 case 1:
                     System.out.println("\n==========");
-                    Registro registro = new Registro(random.nextInt(300) + 100, microControlador, LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
-                    enviarRegistro(registro, servidorProxy);
+                    Registro registro;
+                    if (servidorAVLProxy != null){
+                        registro = new Registro(random.nextInt(300) + 100, microControlador, LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
+                        enviarRegistro(registro, servidorAVLProxy, null, true, null);
+                    }else if (servidorHashProxy != null) {
+                        registro = new Registro(random.nextInt(300) + 10000, microControlador, LocalDateTime.now(), random.nextDouble(40) + 15, random.nextDouble(100) + 1, random.nextDouble(100) + 1);
+                        enviarRegistro(registro, null, servidorHashProxy, true, microControlador);
+                    }
                     break;
                 case 2:
                     System.out.println("\n==========");
                     System.out.print("Informe o id do registro a ser alterado: ");
                     int idRegistro = sc.nextInt();
                     Registro registro1 = new Registro(idRegistro,microControlador, LocalDateTime.now(), (Math.random() * 40) + 15, (Math.random() * 100) + 1, (Math.random() * 100) + 1);
-                    alterarRegistro(registro1, servidorProxy);
+                    if (servidorAVLProxy != null)
+                        alterarRegistro(registro1, servidorAVLProxy, null, true);
+                    else if (servidorHashProxy != null)
+                        alterarRegistro(registro1, null, servidorHashProxy, true);
+
                     break;
                 case 3:
                     System.out.println("Saindo...");
