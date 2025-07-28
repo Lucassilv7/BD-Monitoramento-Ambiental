@@ -1,24 +1,26 @@
 package model.dao.impl;
 
+import estruturas.Huffman;
 import estruturas.ListaEncadeada;
 import estruturas.TabelaHash;
 import model.dao.RegistroDao;
 import model.entidades.MicroControlador;
 import model.entidades.Registro;
+import util.ModoHash;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ServidorHash <E> implements RegistroDao<E> {
 
-    private ListaEncadeada<Registro> bancoDados;
+    private final ListaEncadeada<Registro> bancoDados;
     private TabelaHash indexadorRegistros, indexadorDispositivos;
 
     public ServidorHash() {
         this.bancoDados = new ListaEncadeada<>();
-        this.indexadorRegistros = new TabelaHash<>();
-        this.indexadorDispositivos = new TabelaHash<>();
+        this.indexadorRegistros = new TabelaHash<>(ModoHash.DUPLO);
+        this.indexadorDispositivos = new TabelaHash<>(ModoHash.EXTERIOR);
     }
+
     @SuppressWarnings("unchecked")
     @Override
     public void cadastrar(Registro registro, MicroControlador dispositivo) {
@@ -28,13 +30,13 @@ public class ServidorHash <E> implements RegistroDao<E> {
                 // Adiciona o registro no banco de dados
                 bancoDados.adicionarPrimeiro(registro);
                 // Adiciona o registro no indexador
-                indexadorRegistros.inserir(registro, registro.getIdRegistro());
-                indexadorDispositivos.inserir(dispositivo, dispositivo.getIdDispositivo());
-            } else if (indexadorRegistros.buscar(registro.getIdRegistro()) == null) {
+                indexadorRegistros.inserirDuplo(registro, registro.getIdRegistro());
+                indexadorDispositivos.inserirFinalExterior(dispositivo, dispositivo.getIdDispositivo());
+            } else if (indexadorRegistros.buscarDuplo(registro.getIdRegistro()) == null) {
                 // Adiciona o registro no banco de dados
                 bancoDados.adicionarUltimo(registro);
                 // Adiciona o registro no indexador
-                indexadorRegistros.inserir(registro, registro.getIdRegistro());
+                indexadorRegistros.inserirDuplo(registro, registro.getIdRegistro());
             } else {
                 throw new Exception("Registro já existe ou é nulo");
             }
@@ -46,7 +48,7 @@ public class ServidorHash <E> implements RegistroDao<E> {
     @Override
     public Registro buscar(int idRegistro) {
         try {
-            Registro ponteiro = (Registro) indexadorRegistros.buscar(idRegistro);
+            Registro ponteiro = (Registro) indexadorRegistros.buscarDuplo(idRegistro);
             // Verifica se o registro existe
             if (ponteiro != null) {
                 // Retorna o registro
@@ -85,15 +87,15 @@ public class ServidorHash <E> implements RegistroDao<E> {
         try {
             // Verifica se há registros
             if (!indexadorRegistros.isEmpty()){
-                Registro ponteiro = (Registro) indexadorRegistros.buscar(id);
+                Registro ponteiro = (Registro) indexadorRegistros.buscarDuplo(id);
                 if (ponteiro == null){
                     throw new Exception("Registro não encontrado");
                 }else{
                     // Remove do banco de dados
                     bancoDados.remover(ponteiro);
                     // Remove do indexador
-                    indexadorRegistros.remover(id);
-                    indexadorDispositivos.remover(ponteiro.getIdDispositivo());
+                    indexadorRegistros.removerDuplo(id);
+                    indexadorDispositivos.removerExterior(ponteiro.getIdDispositivo());
                     System.out.println("Registro removido com sucesso");
                 }
             }else {
@@ -109,7 +111,7 @@ public class ServidorHash <E> implements RegistroDao<E> {
         try {
             // Verifica se o registro existe
             if (!indexadorRegistros.isEmpty()){
-                Registro ponteiro = (Registro) indexadorRegistros.buscar(registro.getIdRegistro());
+                Registro ponteiro = (Registro) indexadorRegistros.buscarDuplo(registro.getIdRegistro());
                 // Altera o registro
                 if (ponteiro != null) {
                     // Atualiza os atributos do ponteiro
@@ -164,5 +166,8 @@ public class ServidorHash <E> implements RegistroDao<E> {
     }
     public double getCargaDis() {
         return indexadorDispositivos._getCarga();
+    }
+    public String getBancoDados() {
+        return bancoDados.toString();
     }
 }

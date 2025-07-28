@@ -27,7 +27,8 @@ public class Principal {
          * @param logger Objeto para salvar log
          */
 
-        Logger logger = new Logger("logs/registros.txt");
+        Logger logger = new Logger("logs/informativos/registros.txt");
+        Logger loggerHuffman = new Logger("logs/informativos/compressão.txt");
         Cliente cliente = new Cliente(7, "Lucas Silva");
         List<MicroControlador> microControladores = new ArrayList<>();
         List<Integer> numeros = new ArrayList<>();
@@ -73,7 +74,7 @@ public class Principal {
                 Collections.shuffle(numeros);
 
                 ServidorHash servidorHash = new ServidorHash<>();
-                ServidorHashProxy servidorHashProxy = new ServidorHashProxy(servidorHash, logger);
+                ServidorHashProxy servidorHashProxy = new ServidorHashProxy(servidorHash, logger, loggerHuffman);
 
                 for (int i = 0; i < 100; i++) {
                     // Instancia um novo microcontrolador e adiciona na lista
@@ -177,17 +178,15 @@ public class Principal {
 
                     break;
                 case 4:
-                    System.out.println("Sistema encerrado!");
                     servidorProxy.finalizar();
-                    break;
+                    System.out.println("Sistema encerrado!");
+                    return;
                 default:
                     System.out.println("Opção inválida! Tente novamente.\n\n");
                     break;
             }
-            if (tipoSistema != 4) {
-                menu();
-                tipoSistema = sc.nextInt();
-            }
+            menu();
+            tipoSistema = sc.nextInt();
         }while (tipoSistema != 4);
     }
 

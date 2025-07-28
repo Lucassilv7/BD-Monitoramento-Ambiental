@@ -1,7 +1,9 @@
 package model.entidades;
 
+import estruturas.Huffman;
 import model.dao.impl.ServidorAVLProxy;
 import model.dao.impl.ServidorHashProxy;
+import util.TipoOperacao;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -39,29 +41,32 @@ public class MicroControlador {
 
     public void enviarRegistro(Registro registro, ServidorAVLProxy servidorAVL, ServidorHashProxy servidorHash, boolean exibirMensagem, MicroControlador dispositivo) {
         // Envia o registro a ser cadastrado
-        if (servidorAVL != null)
+        if (servidorAVL != null) {
             servidorAVL.cadastrar(registro, null);
-        else if (servidorHash != null)
-            servidorHash.cadastrar(registro, dispositivo);
-        else
+            if (exibirMensagem)
+                System.out.println("Registro de nº " + registro.getIdRegistro() + " enviado com sucesso!");
+        }else if (servidorHash != null){
+            Mensagens mensagens = servidorHash.requisicaoMicro(new Mensagens(TipoOperacao.CADASTRAR.name(), ""), registro, dispositivo);
+            String conteudo = Huffman.decodificar(mensagens.getConteudo(), mensagens.getRaizCont());
+            if (exibirMensagem)
+                System.out.println(conteudo);
+        }else
             throw new IllegalArgumentException("Servidor não configurado.");
-
-        if (exibirMensagem)
-            System.out.println("Registro de nº " + registro.getIdRegistro() + " enviado com sucesso!");
-
     }
 
     public void alterarRegistro(Registro registro, ServidorAVLProxy servidorAVL, ServidorHashProxy servidorHash, boolean exibirMensagem) {
         // Envia o registro a ser alterado
-        if (servidorAVL != null)
+        if (servidorAVL != null) {
             servidorAVL.alterar(registro, null);
-        else if (servidorHash != null)
-            servidorHash.alterar(registro, this);
-        else
+            if (exibirMensagem)
+                System.out.println("Registro de nº " + registro.getIdRegistro() + " alterado com sucesso!");
+        }else if (servidorHash != null) {
+            Mensagens mensagens = servidorHash.requisicaoMicro(new Mensagens(TipoOperacao.AlTERAR.name(), ""), registro, this);
+            String conteudo = Huffman.decodificar(mensagens.getConteudo(), mensagens.getRaizCont());
+                if (exibirMensagem)
+                    System.out.println(conteudo);
+        }else
             throw new IllegalArgumentException("Servidor não configurado.");
-
-        if (exibirMensagem)
-            System.out.println("Registro de nº " + registro.getIdRegistro() + " alterado com sucesso!");
     }
 
     public void menuDispositivo(Scanner sc, ServidorAVLProxy servidorAVLProxy, ServidorHashProxy servidorHashProxy, MicroControlador microControlador) {

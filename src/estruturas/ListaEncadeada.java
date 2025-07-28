@@ -13,6 +13,14 @@ public class ListaEncadeada <E>{
             this.valor = valor;
             this.proximo = null;
         }
+
+        public E getValor() {
+            return valor;
+        }
+
+        public No getProximo() {
+            return proximo;
+        }
     }
 
     private No cabecote;
@@ -23,6 +31,9 @@ public class ListaEncadeada <E>{
         this.tamanho = 0;
     }
 
+    public void buscarTR(E criterio){
+        this.buscarTR(cabecote, criterio);
+    }
     public void adicionarPrimeiro(E valor) {
         No novo = new No(valor);
 
@@ -73,7 +84,7 @@ public class ListaEncadeada <E>{
         }
     }
 
-    public List<E> listar(){
+    public List<E>  listar(){
         No ponteiro = cabecote;
         List<E> lista = new ArrayList<>();
 
@@ -116,6 +127,25 @@ public class ListaEncadeada <E>{
             if (ponteiro.valor.equals(criterio))
                 return ponteiro;
             ponteiro = ponteiro.proximo;
+        }
+        return null;
+    }
+
+    private No buscarTR(No l, E criterio){
+        No atual, anterio = null;
+        E temp;
+
+        for (atual = l; atual != null; atual = atual.proximo){
+            if (atual.valor == criterio){
+                if (atual != cabecote){
+                    temp = anterio.valor;
+                    anterio.valor = atual.valor;
+                    atual.valor = temp;
+
+                    return anterio;
+                }
+            }
+            anterio = atual;
         }
         return null;
     }
@@ -184,5 +214,23 @@ public class ListaEncadeada <E>{
     }
     public int quantidade() {
         return tamanho;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("");
+
+        No atual = cabecote;
+        while (atual != null) {
+            sb.append(atual.getValor());
+            if (atual.getProximo() != null) {
+                sb.append(" -> ");
+            }
+            atual = atual.getProximo();
+        }
+
+        sb.append("");
+        return sb.toString();
     }
 }

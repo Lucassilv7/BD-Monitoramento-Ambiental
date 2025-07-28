@@ -1,16 +1,21 @@
 package estruturas;
 
-import java.util.List;
-import java.util.ArrayList;
+import util.ModoHash;
 
-public class TabelaHash <E> {
+public class TabelaHash<E> {
     static class No <E>{
         private E referencia;
         private final int chave;
+        private No<E> proximo;
 
-        public No(E referencia, int chave) {
+        public No(E referencia, int chave, No<E> proximo) {
             this.referencia = referencia;
             this.chave = chave;
+            if (proximo != null) {
+                this.proximo = proximo;
+            } else {
+                this.proximo = null;
+            }
         }
     }
 
@@ -18,26 +23,40 @@ public class TabelaHash <E> {
     private final int TAM_BASE = 7;
     private No<E>[] tabela;
 
-    private final No<E> DELETD = new No<>(null, -1);
+    private final No<E> DELETD = new No<>(null, -1, null);
 
     private int redimensionamentos = 0;
     private int colisoes = 0;
+    private ModoHash modoHash;
 
     @SuppressWarnings("unchecked")
-    public TabelaHash() {
+    public TabelaHash(ModoHash modoHash) {
         this.m = TAM_BASE;
         this.tabela = (No<E>[]) new No[TAM_BASE];
         this.n = 0;
+        this.modoHash = modoHash;
     }
 
-    public void inserir(E v, int ch) {
+    public void inserirDuplo(E v, int ch) {
         _inserir(v, ch, false);
     }
-    public E buscar(int id){
+    public void inserirInicioExterior(E v, int ch) {
+        __inserirInicio(v, ch, false);
+    }
+    public void inserirFinalExterior(E v, int ch) {
+        __inserirFinal(v, ch, false);
+    }
+    public E buscarDuplo(int id){
         return _buscar(id);
     }
-    public void remover(int ch){
+    public E buscarExterior(int id){
+        return __buscar(id);
+    }
+    public void removerDuplo(int ch){
         _remover(ch);
+    }
+    public void removerExterior(int ch){
+        __remover(ch);
     }
 
     public boolean isEmpty() {
@@ -47,13 +66,14 @@ public class TabelaHash <E> {
             return false;
     }
 
-    private int hash(int ch, int k){
+    private int hashDuplo(int ch, int k){
         return (ch % this.m + k * (1 + ch %  (this.m - 2))) % this.m;
     }
+    private int hashExterior(int k){return k % this.m;}
 
     private void _inserir(E referencia, int ch, boolean reinserir) {
         int tentativa = 0;
-        int h = this.hash(ch, tentativa);
+        int h = this.hashDuplo(ch, tentativa);
         int primeiroSlotDeletado = -1;
 
 
@@ -64,13 +84,13 @@ public class TabelaHash <E> {
                 primeiroSlotDeletado = h; // Guarda o primeiro slot deletado que encontrar
             }
             colisoes++;
-            h = this.hash(ch, ++tentativa);
+            h = this.hashDuplo(ch, ++tentativa);
         }
 
         if (primeiroSlotDeletado != -1)
-            this.tabela[primeiroSlotDeletado] = new No<>(referencia, ch); // Reutiliza o primeiro slot deletado
+            this.tabela[primeiroSlotDeletado] = new No<>(referencia, ch, null); // Reutiliza o primeiro slot deletado
         else
-            this.tabela[h] = new No<>(referencia, ch);
+            this.tabela[h] = new No<>(referencia, ch, null);
 
         n++;
 
@@ -78,25 +98,83 @@ public class TabelaHash <E> {
             examinarCarga();
         }
     }
+    private void __inserirInicio(E referencia, int ch, boolean reinserir){
+        int h = hashExterior(ch);
+        No<E> no = tabela[h];
+
+        while (no != null){
+            if (no.chave == ch)
+                return;
+            colisoes++;
+            no = no.proximo;
+        }
+        if (no == null){
+            no = new No<>(referencia, ch, tabela[h]);
+            tabela[h] = no;
+        }
+        n++;
+
+        if (!reinserir) {
+            examinarCarga();
+        }
+    }
+    private void __inserirFinal(E referencia, int ch, boolean reinserir){
+        int c = hashExterior(ch);
+
+        No<E> atual = tabela[c];
+        No<E> anterior = null;
+
+        if(atual == null)
+            tabela[c] = new No<>(referencia, ch, null);
+        else {
+            while (atual != null) {
+                if (atual.chave == ch)
+                    return; // Registro já existe
+                colisoes++;
+                anterior = atual;
+                atual = atual.proximo;
+            }
+            if (atual == null){
+                No<E> novo = new No<>(referencia, ch, null);
+                anterior.proximo = novo;
+            }
+        }
+        n++;
+        if (!reinserir) {
+            examinarCarga();
+        }
+    }
 
     private E _buscar(int id){
 
         int tentativa = 0;
-        int h = hash(id, tentativa);
+        int h = hashDuplo(id, tentativa);
 
         while (this.tabela[h] != null){
             if (this.tabela[h].chave == id) {
                 return this.tabela[h].referencia; // Referencia encontrado
             }
-            h = hash(id, ++tentativa);
+            h = hashDuplo(id, ++tentativa);
         }
 
         return null; // Referencia não encontrado
     }
+    private E __buscar(int id){
+        int h = hashExterior(id);
+        No<E> no = tabela[h];
+
+        while (no != null) {
+            if (no.chave == id) {
+                return no.referencia; // Referencia encontrado
+            }
+            no = no.proximo;
+        }
+        return null;
+    }
 
     private void _remover(int ch) {
         int tentativa = 0;
-        int h = hash(ch, tentativa);
+        int h = hashDuplo(ch, tentativa);
 
         while (this.tabela[h] != null) {
             if (this.tabela[h].chave == ch) {
@@ -105,21 +183,49 @@ public class TabelaHash <E> {
                 examinarCarga();
                 return;
             }
-            h = hash(ch, ++tentativa);
+            h = hashDuplo(ch, ++tentativa);
+        }
+    }
+    private void __remover(int ch) {
+        int h = hashExterior(ch);
+        No<E> no = tabela[h];
+        No<E> anterior = null;
+
+        while (no != null) {
+            if (no.chave == ch) {
+                if (anterior == null) {
+                    tabela[h] = no.proximo; // Remove o primeiro nó
+                } else {
+                    anterior.proximo = no.proximo; // Remove o nó do meio ou final
+                }
+                n--;
+                examinarCarga();
+                return;
+            }
+            anterior = no;
+            no = no.proximo;
         }
     }
 
     private void examinarCarga() {
         double carga = (double) n / m;
 
-        if (carga > 0.7)
-            reogarnizar(proximoPrimo(m * 2));
-        else if (carga < 0.3 && m > TAM_BASE)
-            reogarnizar(Math.max(proximoPrimo(m / 2), TAM_BASE));
+        if (this.modoHash == ModoHash.DUPLO) {
+            if (carga > 0.7)
+                reorganizar(proximoPrimo(m * 2));
+            else if (carga < 0.3 && m > TAM_BASE)
+                reorganizar(Math.max(proximoPrimo(m / 2), TAM_BASE));
+        } else if (this.modoHash == ModoHash.EXTERIOR) {
+            if (carga > 1.5) {
+                reorganizar(proximoPrimo(m * 2));
+            } else if (carga < 0.5 && m > TAM_BASE) {
+                reorganizar(Math.max(proximoPrimo(m / 2), TAM_BASE));
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
-    private void reogarnizar(int novoTamanho) {
+    private void reorganizar(int novoTamanho) {
         redimensionamentos++;
         No[] antiga = tabela;
 
@@ -128,7 +234,15 @@ public class TabelaHash <E> {
         n = 0;
 
         for (No no : antiga) {
-            if (no != null) {
+            // Se for encadeamento exterior, precisa percorrer a lista
+            if (no != null && this.modoHash != ModoHash.DUPLO) {
+                No<E> atual = no;
+                while(atual != null) {
+                    __inserirInicio(atual.referencia, atual.chave, true);
+                    atual = atual.proximo;
+                }
+            }
+            else if (no != null) {
                 _inserir((E) no.referencia, no.chave, true);
             }
         }
